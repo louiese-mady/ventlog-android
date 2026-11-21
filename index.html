@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101522"><meta name="description" content="Free private voice-to-text rant journal with ChatGPT handoff and local insights.">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon-192.png"><link rel="stylesheet" href="./style.css">
+<title>Ventlog Free — say it, save it</title>
+<script src="./app.js" defer></script>
+</head>
+<body>
+<div class="shell">
+  <header class="topbar"><div class="logo"><span class="logo-icon" aria-hidden="true">◖≋◗</span><span>ventlog<span class="dot">.</span></span></div><span class="top-label">YOUR PRIVATE SPACE</span></header>
+  <main>
+    <section class="page active" id="page-home" aria-label="Home">
+      <div class="hero">
+        <div class="eyebrow"><span class="green-circle"></span> THE UNFILTERED VERSION OF YOU</div>
+        <h1>Some thoughts<br>need <em>somewhere to go.</em></h1>
+        <p>Talk it out, write it down, and notice what keeps coming up. No API key. No subscription.</p>
+        <button id="home-new" class="hero-cta" type="button"><span class="mic-circle">♩</span><span><strong>Let something out</strong><small>Speak or type your rant</small></span><span class="end-arrow">↗</span></button>
+      </div>
+      <div class="quick-heading"><h2>A little perspective</h2><span id="today-label"></span></div>
+      <div class="summary-grid"><div class="summary-tile"><strong id="home-total">0</strong><small>total rants</small></div><div class="summary-tile"><strong id="home-week">0</strong><small>this week</small></div><div class="summary-tile"><strong id="home-pending">0</strong><small>awaiting reply</small></div></div>
+      <div class="quick-heading"><h2>Last time you checked in</h2><button type="button" class="text-link" data-go="journal">View all ↗</button></div>
+      <div id="home-recent" class="empty-card">Your first rant can be as messy as it needs to be.</div>
+      <div class="hint-note"><span>✳</span><p>You don't have to turn every feeling into a to-do list. Sometimes writing it down is enough.</p></div>
+    </section>
+    <section class="page" id="page-compose" aria-label="New rant">
+      <div class="eyebrow">NEW RANT / NO RULES</div>
+      <h1>Let it <em>all out.</em></h1><p class="intro">Use your voice or keyboard. Everything is editable before you save.</p>
+      <div class="card composer">
+        <div class="field-head"><label for="rant-title">Give it a name <span class="muted">(optional)</span></label></div>
+        <input id="rant-title" maxlength="90" placeholder="What's going on today?">
+        <div class="voice-line"><div class="voice-copy"><strong>Voice to text</strong><small id="voice-label">Tap to dictate. No audio recording is saved.</small></div><button id="dictate-btn" type="button" class="voice-btn" aria-label="Start voice dictation"> <span id="mic-glyph">🎙</span> <span id="mic-label">Speak</span></button></div>
+        <div class="field-head"><label for="rant-body">What's on your mind?</label><span id="words-live">0 words</span></div>
+        <textarea id="rant-body" rows="9" maxlength="30000" placeholder="I'm frustrated because…"></textarea>
+        <label for="speech-lang" class="speech-label">Dictation language</label><select id="speech-lang" class="speech-lang"><option value="en-PH">English (Philippines)</option><option value="fil-PH">Filipino</option><option value="en-US">English (US)</option></select>
+        <div id="speech-warning" class="microcopy">Voice dictation depends on your phone's browser and may use its online speech service. You can always use your keyboard microphone.</div>
+      </div>
+      <div class="card meta-card">
+        <label for="mood-select">What are you feeling? <span class="muted">(your choice)</span></label>
+        <select id="mood-select"><option value="Mixed">Mixed / not sure</option><option value="Frustrated">Frustrated</option><option value="Anxious">Anxious</option><option value="Sad">Sad</option><option value="Angry">Angry</option><option value="Overwhelmed">Overwhelmed</option><option value="Hopeful">Hopeful</option><option value="Happy">Happy</option><option value="Calm">Calm</option><option value="Other">Other</option></select>
+        <div class="rating-head"><label>How intense does it feel?</label><strong id="rating-label">3 / 5</strong></div>
+        <div class="rating-row" role="group" aria-label="Intensity rating"><button type="button" data-rating="1">1</button><button type="button" data-rating="2">2</button><button type="button" data-rating="3" class="picked">3</button><button type="button" data-rating="4">4</button><button type="button" data-rating="5">5</button></div>
+        <div class="scale-ends"><span>Light</span><span>Very intense</span></div>
+        <label for="topic-input">Topics <span class="muted">(comma-separated, optional)</span></label><input id="topic-input" placeholder="Work, money, relationships…"><small class="input-note">If left blank, Ventlog suggests topics using simple keyword matches. You can edit them anytime.</small>
+        <label>What do you want from ChatGPT?</label>
+        <div class="choice-stack" id="intent-choices"><button type="button" data-intent="listen">Just listen and help me feel understood</button><button type="button" data-intent="perspective" class="picked">Give me perspective and advice</button><button type="button" data-intent="plan">Help me decide what to do next</button></div>
+      </div>
+      <button class="btn primary wide" id="save-rant" type="button">Save my rant <span>✓</span></button>
+      <button class="btn outline wide" id="save-send" type="button">Save & prepare for ChatGPT <span>↗</span></button>
+      <p class="subtle-center">Stored on this device. Nothing is sent to ChatGPT unless you choose to send it.</p>
+    </section>
+    <section class="page" id="page-patterns" aria-label="Patterns">
+      <div class="eyebrow">THE BIGGER PICTURE</div><h1>Notice the <em>patterns.</em></h1><p class="intro">Track what you've written—without pretending feelings are a diagnosis.</p>
+      <div class="pattern-grid"><div class="pattern-tile"><span>Total entries</span><strong id="p-total">0</strong><small>All time</small></div><div class="pattern-tile"><span>Avg. intensity</span><strong id="p-intensity">—</strong><small>Your rating · 1–5</small></div><div class="pattern-tile"><span>Unique days</span><strong id="p-days">0</strong><small>Days checked in</small></div><div class="pattern-tile"><span>Words written</span><strong id="p-words">0</strong><small>Your own words</small></div></div>
+      <div class="card chart-card"><div class="chart-head"><h2>Last 7 days</h2><small>Entries per day</small></div><div id="activity-chart" class="activity-chart"></div></div>
+      <div class="card chart-card"><div class="chart-head"><h2>Intensity over time</h2><small>Daily average · 1–5</small></div><div id="intensity-chart" class="activity-chart"></div></div>
+      <div class="card chart-card"><div class="chart-head"><h2>Recurring topics</h2><small>Typed or keyword-matched</small></div><div id="topics-chart" class="stat-rows"></div></div>
+      <div class="card chart-card"><div class="chart-head"><h2>Feelings you've chosen</h2><small>Self-reported, not AI-inferred</small></div><div id="moods-chart" class="stat-rows"></div></div>
+      <div class="card chart-card"><div class="chart-head"><h2>When you tend to vent</h2><small>Time of day</small></div><div id="time-chart" class="stat-rows"></div></div>
+      <div class="insight"><span>✳ &nbsp;A small observation</span><p id="pattern-insight">A few entries will make patterns easier to notice.</p></div>
+      <p class="subtle-center">These are counts and personal ratings, not mental-health assessments.</p>
+    </section>
+    <section class="page" id="page-journal" aria-label="Journal">
+      <div class="eyebrow">YOUR PRIVATE ARCHIVE</div><h1>All the things<br><em>you let out.</em></h1><p class="intro">Find a thought, return with a reply, or share it with your notes app.</p>
+      <div class="search-row"><input id="journal-search" type="search" placeholder="Search rants, topics, replies…"><button id="backup-menu" class="mini-gear" type="button" aria-label="Journal backup and restore">⋯</button></div>
+      <div id="journal-list" class="journal-list"></div>
+    </section>
+    <section class="page" id="page-detail" aria-label="Rant details">
+      <button type="button" class="back-link" id="detail-back">← All rants</button>
+      <div class="eyebrow">SAVED THOUGHT</div><h1 id="detail-heading" class="detail-heading">Your rant</h1><div id="detail-meta" class="detail-meta"></div>
+      <div class="card detail-card"><h2>In your own words</h2><p id="detail-body" class="body-text"></p></div>
+      <div class="card reply-card"><div class="reply-title"><h2>ChatGPT's reply</h2><span id="reply-status">Not added yet</span></div><p class="tip-line">You decide what to send. Paste your ChatGPT response below, or share selected text to Ventlog if your phone supports it.</p>
+        <textarea id="reply-body" rows="8" placeholder="Return from ChatGPT, then paste its response here…"></textarea>
+        <div class="inline-buttons"><button class="btn slim outline" id="paste-reply">Paste reply</button><button class="btn slim primary" id="save-reply">Save response</button></div>
+      </div>
+      <div class="card handoff-card"><h2>Get a response from ChatGPT</h2><p>Use your free ChatGPT account. First copy a prepared prompt, then open ChatGPT and paste it. Ventlog cannot read another tab automatically.</p><div class="inline-buttons"><button class="btn slim primary" id="copy-prompt">1. Copy prompt</button><a class="btn slim outline" id="open-chatgpt" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">2. Open ChatGPT ↗</a></div><button id="show-prompt" class="text-link" type="button">Preview the prompt</button><textarea id="prompt-preview" rows="8" readonly hidden></textarea></div>
+      <div class="card export-card"><h2>Keep it anywhere</h2><p>Save a plain-text file, or send the rant and reply to a notes app through Android's share menu.</p><div class="inline-buttons"><button class="btn slim outline" id="download-txt">↓ Download .txt</button><button class="btn slim outline" id="share-notes">↗ Share to Notes</button></div></div>
+      <div class="detail-footer"><button type="button" class="danger-link" id="delete-entry">Delete this entry</button></div>
+    </section>
+  </main>
+  <nav class="bottom-nav" aria-label="App sections"><button type="button" data-go="home" class="active"><span>⌂</span><small>Home</small></button><button type="button" data-go="compose"><span>✎</span><small>New rant</small></button><button type="button" data-go="patterns"><span>▥</span><small>Patterns</small></button><button type="button" data-go="journal"><span>▤</span><small>Journal</small></button></nav>
+</div>
+<dialog id="backup-dialog" class="modal"><form method="dialog"><div class="modal-head"><h2>Your data</h2><button class="close-dialog" aria-label="Close">×</button></div></form><p>Back up your rants before clearing browser storage or changing phones. Nothing is synchronized.</p><button id="export-json" class="btn wide outline" type="button">Export complete journal (.json)</button><label class="file-import">Import a journal backup <input id="import-json" type="file" accept="application/json,.json"></label><button id="delete-all" class="danger-link" type="button">Delete all saved entries</button><p class="modal-foot">Your journal is stored locally, unencrypted. Voice dictation may use your browser's online speech provider. ChatGPT only receives text you explicitly send.</p></dialog>
+<div id="toast" role="status" aria-live="polite" class="toast" hidden></div>
+</body>
+</html>
