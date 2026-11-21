@@ -9,6 +9,7 @@
     <activity
         android:name=".MainActivity"
         android:exported="true"
+        android:launchMode="singleTop"
         android:windowSoftInputMode="adjustResize">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
@@ -20,5 +21,14 @@
         <data android:mimeType="text/plain" />
       </intent-filter>
     </activity>
+    <receiver android:name=".VentlogWidgetProvider"
+        android:exported="true"
+        android:label="Ventlog · Quick Rant">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data android:name="android.appwidget.provider"
+          android:resource="@xml/ventlog_widget_info" />
+    </receiver>
   </application>
 </manifest>

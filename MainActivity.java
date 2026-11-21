@@ -37,6 +37,7 @@ public final class MainActivity extends Activity {
     private ValueCallback<Uri[]> fileCallback;
     private String sharedText;
     private boolean pageReady = false;
+    private String pendingWidgetMode;
 
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -94,11 +95,13 @@ public final class MainActivity extends Activity {
                 if (HOME.equals(url)) {
                     pageReady = true;
                     applySharedText();
+                    applyWidgetStart();
                 }
             }
         });
         setContentView(webView);
         receiveShare(getIntent());
+        queueWidgetStart(getIntent());
         webView.loadUrl(HOME);
     }
 
@@ -212,11 +215,27 @@ public final class MainActivity extends Activity {
             sharedText = null;
         }
     }
+    private void queueWidgetStart(Intent input) {
+        if (input == null) return;
+        String action = input.getAction();
+        if (VentlogWidgetProvider.ACTION_VOICE.equals(action)) pendingWidgetMode = "voice";
+        else if (VentlogWidgetProvider.ACTION_TYPE.equals(action)) pendingWidgetMode = "type";
+        applyWidgetStart();
+    }
+
+    private void applyWidgetStart() {
+        if (!pageReady || pendingWidgetMode == null) return;
+        String mode = pendingWidgetMode;
+        pendingWidgetMode = null;
+        js("if(window.ventlogWidgetStart){window.ventlogWidgetStart(" + JSONObject.quote(mode) + ");}");
+    }
+
     @Override protected void onNewIntent(Intent input) {
         super.onNewIntent(input);
         setIntent(input);
         receiveShare(input);
         applySharedText();
+        queueWidgetStart(input);
     }
     private void show(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();

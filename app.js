@@ -140,6 +140,14 @@
   $('export-json').addEventListener('click',()=>{downloadFile(JSON.stringify({app:'Ventlog Free',version:1,exportedAt:new Date().toISOString(),entries},null,2),`ventlog-backup-${simpleDate(new Date())}.json`,'application/json');toast('Journal backup downloaded.');});
   $('import-json').addEventListener('change',async ev=>{const f=ev.target.files?.[0];if(!f)return;try{if(f.size>8*1024*1024)throw new Error('Backup too large (8 MB max).');const data=JSON.parse(await f.text());if(data.app!=='Ventlog Free'||!Array.isArray(data.entries))throw new Error('Not a Ventlog Free backup.');const incoming=data.entries.filter(x=>x&&typeof x.id==='string'&&typeof x.text==='string'&&typeof x.createdAt==='string').slice(0,5000);if(!confirm(`Import ${incoming.length} entries? Existing entries with the same ID will be updated.`))return;const m=new Map(entries.map(e=>[e.id,e]));for(const e of incoming)m.set(e.id,e);const prev=entries;entries=Array.from(m.values());if(!persist())entries=prev;else{toast(`${incoming.length} entries imported.`);$('backup-dialog').close();go('journal');}}catch(err){toast(err.message||'Invalid backup file.');}finally{ev.target.value='';}});
   $('delete-all').addEventListener('click',()=>{if(!confirm('Permanently delete ALL Ventlog entries on this device?'))return;if(!confirm('Last check: delete everything? Export a backup first if needed.'))return;entries=[];draftId=null;selectedId=null;persist();$('backup-dialog').close();go('home');toast('All entries deleted.');});
+  // Invoked only when the Android home-screen widget opens Ventlog.
+  // Keep any existing unsaved text instead of silently discarding it.
+  window.ventlogWidgetStart=(mode)=>{
+    if(!$('rant-body').value.trim())resetComposer();
+    go('compose');
+    if(mode==='voice')toggleDictation();
+    else $('rant-body').focus();
+  };
   window.ventlogNativeSpeechResult=(spoken)=>{
     const t=String(spoken||'').trim();if(!t)return;
     const before=$('rant-body').value.trimEnd();

@@ -1,4 +1,4 @@
-# Ventlog Free — proper Android project (v1.1)
+# Ventlog Free — Android v1.3 home-screen widget
 
 This replaces the earlier manually assembled APK. This repository contains **native Android Java source** and the complete static Ventlog UI. It builds using the official Android Gradle plugin.
 
@@ -27,3 +27,8 @@ Open this folder in Android Studio. Set up SDK 35 and JDK 17, sync Gradle, then 
 ## Status
 - This is **source code, not a precompiled APK**. It has not been built with the Android SDK or tested on a real Android device in the current environment. Use the included official Gradle build workflow, then verify the installed APK on a phone. This project is not published to Play Store.
 - The GitHub Actions APK is debug-signed, so do not publish it to the Play Store as a release build. It is intended for personal sideloading.
+
+## Android home-screen widget (v1.3)
+Long-press an empty spot on the home screen → Widgets → Ventlog Free → Ventlog · Quick Rant → Add. Tap the microphone/card to open the composer and launch speech recognition; tap TYPE for the keyboard. Android voice recognition provides an editable transcript; raw audio is not recorded or stored. This does not run in the background.
+
+**Before replacing the previous APK:** back up your journal in Ventlog (Your data → Export complete journal). GitHub Actions debug-signs each APK with an ephemeral key, so Android may reject an in-place update. If that happens, only uninstall after exporting a backup, then install the new APK and import the journal backup.
